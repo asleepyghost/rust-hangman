@@ -3,23 +3,23 @@ use std::fmt::{Display, Formatter};
 #[derive(Debug)]
 pub struct GameState {
     // make it a vector so it's easy to find the position of correctly guessed letters
-    random_word: Vec<String>,
+    random_word: Vec<char>,
     no_of_guesses: u8,
     guess: String, // This is the guess output with underscores and found letters included
 }
 
-fn get_as_vec_of_strings(word: &String) -> Vec<String> {
-    word.chars().map(|x| x.to_string()).collect::<Vec<String>>()
+fn get_as_vec_of_chars(word: &String) -> Vec<char> {
+    word.chars().collect::<Vec<char>>()
 }
 
 // This generates a word of underscores which is the same length as the generated random word
-fn initialise_guess(random_word: &Vec<String>) -> String {
+fn initialise_guess(random_word: &Vec<char>) -> String {
     random_word.iter().map(|_| "_").collect::<String>()
 }
 
 impl GameState {
     pub fn new(word: &String) -> Self {
-        let random_word = get_as_vec_of_strings(&word);
+        let random_word = get_as_vec_of_chars(word);
         let guess = initialise_guess(&random_word);
 
         GameState {
@@ -30,29 +30,26 @@ impl GameState {
     }
 
     pub fn get_generated_word_as_str(&self) -> String {
-        self.random_word
-            .iter()
-            .flat_map(|x| x.chars())
-            .collect::<String>()
+        self.random_word.iter().collect::<String>()
     }
 
-    pub fn submit_guess(&mut self, guess: &String) {
+    pub fn submit_guess(&mut self, guess: char) {
         self.guess = self
             .random_word
             .iter()
             .enumerate()
             .map(|(idx, letter)| {
                 if self.guess.chars().nth(idx).unwrap() != '_' {
-                    return letter.to_string();
+                    return *letter;
                 }
 
-                if String::from(letter).trim() == String::from(guess).trim() {
-                    return letter.to_string();
+                if *letter == guess {
+                    return *letter;
                 }
 
-                return String::from("_");
+                return '_';
             })
-            .collect();
+            .collect::<String>();
     }
 
     pub fn increment_guess_count(&mut self) {
