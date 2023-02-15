@@ -10,14 +10,19 @@ fn print_greeting(game_state: &GameState) {
     println!("Please guess a letter: ");
 }
 
-fn get_user_guess() -> String {
+fn get_user_guess() -> char {
     let mut guess = String::from("");
 
     stdin()
         .read_line(&mut guess)
         .expect("Something went wrong reading your guess.");
 
-    guess
+    let char_guess = guess.chars().nth(0);
+
+    match char_guess {
+        Some(guess) => guess,
+        None => ' ',
+    }
 }
 
 fn next_round(game_state: &mut GameState) -> bool {
@@ -33,12 +38,12 @@ fn next_round(game_state: &mut GameState) -> bool {
 
     let guess = get_user_guess();
 
-    if guess.trim().len() != 1 {
+    if guess == ' ' {
         println!("Please provide a single character as a guess.");
         next_round(game_state);
     }
 
-    game_state.submit_guess(&guess);
+    game_state.submit_guess(guess);
     game_state.increment_guess_count();
     next_round(game_state)
 }
